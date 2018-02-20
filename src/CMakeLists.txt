@@ -1,3 +1,7 @@
-file(GLOB_RECURSE source *.cpp)
+find_library(LIBFSCOMPSOC_LIBRARY
+  NAMES fscompsoc
+)
 
-add_library(libfscompsoc ${source})
+find_path(XRANDR_INCLUDE_DIR
+  NAMES fscompsoc
+)
