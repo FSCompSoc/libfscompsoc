@@ -43,4 +43,6 @@ namespace fscompsoc::exceptions {
   FSCOMPSOC_MAKE_EXCEPTION(ParseFailed, "Parsing failed");
 
   FSCOMPSOC_MAKE_EXCEPTION(InvalidArgument, "The argument was invalid");
+
+  FSCOMPSOC_MAKE_EXCEPTION(NotDoneYet, "The function reached incomplete code");
 }
