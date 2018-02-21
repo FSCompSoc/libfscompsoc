@@ -17,6 +17,24 @@ include_directories(include)
 
 file(GLOB_RECURSE source src/*.cpp)
 
+if (UNIX)
+  file(GLOB_RECURSE plat_source src/*.unix.cxx)
+  set(source ${source} ${plat_source})
+  message(${source})
+endif()
+if (LINUX)
+  file(GLOB_RECURSE plat_source src/*.linux.cxx)
+  set(source ${source} ${plat_source})
+endif()
+if (APPLE)
+  file(GLOB_RECURSE plat_source src/*.osx.cxx)
+  set(source ${source} ${plat_source})
+endif()
+if (WIN32)
+  file(GLOB_RECURSE plat_source src/*.win.cxx)
+  set(source ${source} ${plat_source})
+endif()
+
 add_library(fscompsoc SHARED ${source})
 
 target_link_libraries(fscompsoc)
@@ -58,7 +76,5 @@ set(CPACK_COMPONENT_DEV_DEPENDS lib)
 set(CPACK_COMPONENT_CMAKE_DEPENDS dev)
 
 INCLUDE(CPack)
-
-message(${CPACK_COMPONENT_DEV_DEPENDS})
 
 add_custom_target(default ALL DEPENDS fscompsoc)

@@ -44,5 +44,7 @@ namespace fscompsoc::exceptions {
 
   FSCOMPSOC_MAKE_EXCEPTION(InvalidArgument, "The argument was invalid");
 
+  FSCOMPSOC_MAKE_EXCEPTION(Unsupported, "An unsupported action was requested");
+
   FSCOMPSOC_MAKE_EXCEPTION(NotDoneYet, "The function reached incomplete code");
 }
