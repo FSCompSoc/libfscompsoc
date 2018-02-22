@@ -1,7 +1,7 @@
 #pragma once
 
-#include "net/ip.hpp"
-#include "async/attempt.hpp"
+#include "fscompsoc/net/ip.hpp"
+#include "fscompsoc/async/attempt.hpp"
 
 #include <functional>
 #include <exception>
@@ -36,7 +36,7 @@ namespace fscompsoc::net {
   class tcp_socket : public socket {
   private:
     class __internal_data;
-    std::unique_ptr<__internal_data> __internal;
+    __internal_data* __internal;
 
   public:
     async::maybe<std::vector<uint8_t>> receive() override;
@@ -51,7 +51,7 @@ namespace fscompsoc::net {
   class tcp_server : public bindable, public socket_server<tcp_socket> {
   private:
     class __internal_data;
-    std::unique_ptr<__internal_data> __internal;
+    __internal_data* __internal;
 
   public:
     async::maybe<std::unique_ptr<tcp_socket>> accept() override;
@@ -61,7 +61,7 @@ namespace fscompsoc::net {
   class udp_socket : public bindable, public socket {
   private:
     class __internal_data;
-    std::unique_ptr<__internal_data> __internal;
+    __internal_data* __internal;
 
   public:
     async::maybe<std::vector<uint8_t>> receive() override;
@@ -77,7 +77,7 @@ namespace fscompsoc::net {
   class udp_server : public bindable, public socket_server<udp_socket> {
   private:
     class __internal_data;
-    std::unique_ptr<__internal_data> __internal;
+    __internal_data* __internal;
 
   public:
     async::maybe<std::unique_ptr<udp_socket>> accept() override;

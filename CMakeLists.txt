@@ -46,8 +46,8 @@ install(
 )
 
 install(
-  DIRECTORY include/
-  DESTINATION include/fscompsoc
+  DIRECTORY include/fscompsoc
+  DESTINATION include/
   COMPONENT dev
 )
 
@@ -57,7 +57,6 @@ install(
   COMPONENT cmake
 )
 
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "FSCompSoc")
 SET(CPACK_PACKAGE_VERSION "0.0.1")
 
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -67,14 +66,20 @@ endif()
 if(NOT DEFINED CPACK_GENERATOR)
   # TODO: platform logic
   set(CPACK_GENERATOR "DEB")
+endif()
+
+if(CPACK_GENERATOR STREQUAL "DEB")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "FSCompSoc")
   set(CPACK_DEB_COMPONENT_INSTALL ON)
   set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
   set(CPACK_DEBIAN_ENABLE_COMPONENT_DEPENDS ON)
+  set(CPACK_DEBIAN_LIB_PACKAGE_NAME "libfscompsoc")
 endif()
+
 
 set(CPACK_COMPONENT_DEV_DEPENDS lib)
 set(CPACK_COMPONENT_CMAKE_DEPENDS dev)
 
 INCLUDE(CPack)
 
-add_custom_target(default ALL DEPENDS fscompsoc)
+#add_custom_target(rebuild ALL DEPENDS fscompsoc)

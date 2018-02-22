@@ -1,6 +1,6 @@
-#include "net/socket.hpp"
+#include "fscompsoc/net/socket.hpp"
 
-#include "exceptions.hpp"
+#include "fscompsoc/exceptions.hpp"
 
 using namespace std;
 using namespace fscompsoc::exceptions;
@@ -48,7 +48,7 @@ namespace fscompsoc::net {
           if(str == "::") {
             bytes.assign(0, 8);
           } else {
-            bytes.resize(8);
+            bytes.resize(16);
 
             vector<string> groups;
 
