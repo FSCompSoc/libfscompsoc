@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+execute_process(COMMAND git describe --tags --long
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  OUTPUT_VARIABLE GIT_VER
+)
+
 project(libfscompsoc)
 
 include(InstallRequiredSystemLibraries)
@@ -57,7 +62,7 @@ install(
   COMPONENT cmake
 )
 
-SET(CPACK_PACKAGE_VERSION "0.0.1")
+SET(CPACK_PACKAGE_VERSION ${GIT_VER})
 
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
   set(CMAKE_INSTALL_PREFIX "/usr/local")
