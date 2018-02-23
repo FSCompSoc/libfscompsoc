@@ -13,6 +13,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
+#include <vector>
 
 using namespace std;
 using namespace fscompsoc::exceptions;
@@ -50,16 +51,16 @@ namespace fscompsoc::net {
 
               buffers_mutex.lock();
 
-              vector buffer(length);
+              vector<uint8_t> buffer(length);
 
-              length = ::read(fd, buffer.data() + buffer_size, length);
+              length = ::read(fd, buffer.data(), length);
 
               if(length < 0)
                 throw InternalException(Insane("recv < 0 for a checked read"));
 
-              buffer.resize(buffer_size + length);
+              buffer.resize(length);
 
-              buffer_mutex.unlock();
+              buffers_mutex.unlock();
 
               condvar.notify_one();
             }
@@ -73,6 +74,31 @@ namespace fscompsoc::net {
           }
         }
       });
+    }
+
+    optional<vector<uint8_t>> get_buffer(shared_ptr<bool> cancel) {
+      unique_lock<mutex> lock(condvar_mutex);
+      optional<vector<uint8_t>> ret;
+      while(condvar.wait_for(lock, 10ms) == cv_status::timeout) {
+        if(*cancel)
+          return nullopt;
+      }
+
+      buffers_mutex.lock();
+
+      // Check for spurious wakeup and final cancel check
+      if(buffers.size() > 0 && !*cancel) {
+        ret = buffers.front();
+        buffers.pop();
+      }
+
+      buffers_mutex.unlock();
+
+      return ret;
+    }
+
+    void cancel(shared_ptr<bool> cancel) {
+      *cancel = true;
     }
   };
 
@@ -128,13 +154,11 @@ namespace fscompsoc::net {
   }
 
   action<vector<uint8_t>> tcp_socket::receive() {
-    return function<optional<vector<uint8_t>>()>([this]() {
-      unique_lock<mutex> lock(condvar_mutex);
-      condvar.wait(lock);
+    shared_ptr<bool> c(new bool);
 
-      mutex.lock();
-
-      mutex.unlock();
-    });
+    return action<vector<uint8_t>>(
+      [this, c]() { return __internal->get_buffer(c); },
+      [this, c]() { __internal->cancel(c); }
+    );
   }
 }
