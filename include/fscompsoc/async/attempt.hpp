@@ -23,6 +23,7 @@ namespace fscompsoc::async {
 
     inline bool is_cancellable() { return on_cancel.has_value(); }
     inline void cancel() {
+      if (!running) return;
       if(on_cancel) {
         (*on_cancel)();
         running = false;
@@ -31,6 +32,8 @@ namespace fscompsoc::async {
     }
 
     inline bool try_cancel() {
+      if (!running)
+        return false;
       if(on_cancel) {
         (*on_cancel)();
         running = false;
@@ -71,5 +74,7 @@ namespace fscompsoc::async {
   public:
     attempt(std::function<bool()> func);
     attempt(std::function<bool()> func, std::function<void()> cancel);
+
+    ~attempt();
   };
 }

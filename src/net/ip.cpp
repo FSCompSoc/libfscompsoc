@@ -25,15 +25,15 @@ namespace fscompsoc::net {
       case 4:
         {
           bytes.reserve(4);
-          bytes.push_back(stoi(string(start, iter - 1)));
+          bytes.push_back(stoi(string(start, iter)));
           for (int i = 0; i < 3; ++i) {
             start = ++iter;
-            for (;*iter == '.' && iter != str.end(); iter++);
+            for (;*iter != '.' && iter != str.end(); ++iter);
             size_t dist = (iter - start);
             int val;
             if (
               dist == 0 || dist > 4 ||
-              (val = stoi(string(start, iter - 1))) > 0xFF
+              (val = stoi(string(start, iter))) > 0xFF
             ) throw InvalidArgument("An IPv4 group was out of range");
 
             bytes.push_back(val);

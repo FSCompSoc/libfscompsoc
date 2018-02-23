@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 execute_process(COMMAND git describe --tags --long
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   OUTPUT_VARIABLE GIT_VER
@@ -28,7 +30,6 @@ file(GLOB_RECURSE source src/*.cpp)
 if (UNIX)
   file(GLOB_RECURSE plat_source src/*.unix.cxx)
   set(source ${source} ${plat_source})
-  message(${source})
 endif()
 if (LINUX)
   file(GLOB_RECURSE plat_source src/*.linux.cxx)
@@ -91,3 +92,18 @@ set(CPACK_COMPONENT_CMAKE_DEPENDS dev)
 INCLUDE(CPack)
 
 #add_custom_target(rebuild ALL DEPENDS fscompsoc)
+
+file(GLOB_RECURSE tests tests/*.cpp)
+
+foreach(test ${tests})
+  get_filename_component(test_name ${test} NAME_WE)
+
+  add_executable(${test_name} ${test})
+
+  target_link_libraries(${test_name} fscompsoc)
+
+  add_test(${test_name} ${test_name})
+endforeach()
+
+
+enable_testing()

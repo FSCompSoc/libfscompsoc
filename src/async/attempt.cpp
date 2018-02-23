@@ -25,4 +25,9 @@ namespace fscompsoc::async {
       result.set_value(v);
     });
   }
+
+  attempt::~attempt() {
+    try_cancel();
+    _t.detach();
+  }
 }

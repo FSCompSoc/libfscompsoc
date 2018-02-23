@@ -105,7 +105,7 @@ namespace fscompsoc::bits {
       return endian<BigEndian, T>::wrap(l2b_endian(data));
     };
 
-    inline operator T() const { return l2h_endian(data); }
+    inline operator T() const { return data; }
 
   public:
     inline endian(T t) : data(h2l_endian(t)) {}
@@ -122,7 +122,7 @@ namespace fscompsoc::bits {
       return endian<LittleEndian, T>::wrap(b2l_endian(data));
     };
 
-    inline operator T() const { return b2h_endian(data); }
+    inline operator T() const { return data; }
 
   public:
     inline endian(T t) : data(h2b_endian(t)) {}

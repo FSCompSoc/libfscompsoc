@@ -112,6 +112,12 @@ namespace fscompsoc::net {
 
       return success;
     }
+
+  public:
+    ~unix_socket() {
+      ::close(fd);
+      poller.join();
+    }
   };
 
   class tcp_socket::__internal_data : public unix_socket {};
@@ -127,14 +133,17 @@ namespace fscompsoc::net {
         {
           sockaddr_in addr;
           addr.sin_family = AF_INET;
+          memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
           memcpy(&addr.sin_addr.s_addr, server.addr.bytes.data(), 4);
           addr.sin_port = endian<NetworkEndian, uint16_t>(server.port);
 
-          ::connect(
+          printf("%s\n", inet_ntoa(addr.sin_addr));
+
+          if(::connect(
             __internal->fd,
             reinterpret_cast<sockaddr*>(&addr),
             sizeof(addr)
-          );
+          ) == -1) throw socket::ConnectionFailed();
         }
         break;
 
@@ -145,11 +154,11 @@ namespace fscompsoc::net {
           memcpy(&addr.sin6_addr.s6_addr, server.addr.bytes.data(), 16);
           addr.sin6_port = endian<NetworkEndian, uint16_t>(server.port);
 
-          ::connect(
+          if(::connect(
             __internal->fd,
             reinterpret_cast<sockaddr*>(&addr),
             sizeof(addr)
-          );
+          ) == -1) throw socket::ConnectionFailed();
         }
       break;
 

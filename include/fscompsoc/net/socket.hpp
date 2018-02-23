@@ -13,6 +13,8 @@
 namespace fscompsoc::net {
   class socket {
   public:
+    FSCOMPSOC_MAKE_EXCEPTION(ConnectionFailed, "The connection failed")
+  public:
     virtual async::action<std::vector<uint8_t>> receive() = 0;
     virtual async::attempt send(std::vector<uint8_t> data) = 0;
   };
