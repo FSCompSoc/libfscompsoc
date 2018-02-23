@@ -6,7 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 execute_process(COMMAND git describe --tags --long
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   OUTPUT_VARIABLE GIT_VER
+  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
+string(SUBSTRING ${GIT_VER} 1 -1 GIT_VER)
 
 project(libfscompsoc)
 
