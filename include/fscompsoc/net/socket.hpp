@@ -2,6 +2,7 @@
 
 #include "fscompsoc/net/ip.hpp"
 #include "fscompsoc/async/attempt.hpp"
+#include "fscompsoc/async/action.hpp"
 
 #include <functional>
 #include <exception>
@@ -12,7 +13,7 @@
 namespace fscompsoc::net {
   class socket {
   public:
-    virtual async::maybe<std::vector<uint8_t>> receive() = 0;
+    virtual async::action<std::vector<uint8_t>> receive() = 0;
     virtual async::attempt send(std::vector<uint8_t> data) = 0;
   };
 
@@ -23,7 +24,7 @@ namespace fscompsoc::net {
   public:
     virtual async::attempt start() = 0;
     virtual async::attempt stop() = 0;
-    virtual async::maybe<std::unique_ptr<SocketType>> accept() = 0;
+    virtual async::action<std::unique_ptr<SocketType>> accept() = 0;
   };
 
   class bindable {
@@ -33,13 +34,14 @@ namespace fscompsoc::net {
 
   using any_socket_server = socket_server<socket>;
 
+  // Be aware that TCP is effectively stream of bytes, with no discrete 'messages'
   class tcp_socket : public socket {
   private:
     class __internal_data;
     __internal_data* __internal;
 
   public:
-    async::maybe<std::vector<uint8_t>> receive() override;
+    async::action<std::vector<uint8_t>> receive() override;
     async::attempt send(std::vector<uint8_t> data) override;
 
   public:
@@ -54,7 +56,7 @@ namespace fscompsoc::net {
     __internal_data* __internal;
 
   public:
-    async::maybe<std::unique_ptr<tcp_socket>> accept() override;
+    async::action<std::unique_ptr<tcp_socket>> accept() override;
     async::attempt bind() override;
   };
 
@@ -64,7 +66,7 @@ namespace fscompsoc::net {
     __internal_data* __internal;
 
   public:
-    async::maybe<std::vector<uint8_t>> receive() override;
+    async::action<std::vector<uint8_t>> receive() override;
     async::attempt send(std::vector<uint8_t> data) override;
     async::attempt bind() override;
 
@@ -80,7 +82,7 @@ namespace fscompsoc::net {
     __internal_data* __internal;
 
   public:
-    async::maybe<std::unique_ptr<udp_socket>> accept() override;
+    async::action<std::unique_ptr<udp_socket>> accept() override;
     async::attempt bind() override;
   };
 }

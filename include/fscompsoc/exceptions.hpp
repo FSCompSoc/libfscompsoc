@@ -1,6 +1,7 @@
 #pragma once
 
 #include <exception>
+#include <cstring>
 
 #define FSCOMPSOC_MAKE_EXCEPTION(EXCEPTION_NAME, DEFAULT_MESSAGE)              \
   class EXCEPTION_NAME : public std::exception {                               \
@@ -47,4 +48,12 @@ namespace fscompsoc::exceptions {
   FSCOMPSOC_MAKE_EXCEPTION(Unsupported, "An unsupported action was requested");
 
   FSCOMPSOC_MAKE_EXCEPTION(NotDoneYet, "The function reached incomplete code");
+
+  FSCOMPSOC_MAKE_EXCEPTION(InvalidOperation, "An invalid operation was requested");
+
+  FSCOMPSOC_MAKE_EXCEPTION(TimedOut, "The operation timed out");
+
+  // An exception that should never be caught, as it represents a fundemental
+  // inconsitency in the program
+  FSCOMPSOC_MAKE_EXCEPTION(Insane, "The operation encountered unexpected behaviour")
 }

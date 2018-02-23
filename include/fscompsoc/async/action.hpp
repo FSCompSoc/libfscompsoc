@@ -9,14 +9,13 @@
 #include <chrono>
 
 namespace fscompsoc::async {
-    // NOTE: we have to implement this seperately from action,
-    // as optional<void> is invalid
-  class attempt {
+  template<typename T>
+  class action {
   private:
     std::thread _t;
     std::optional<std::function<void()>> on_cancel;
     bool running = true;
-    std::future<bool> ret;
+    std::future<std::optional<T>> ret;
 
   public:
     inline bool is_running() { return running; }
@@ -26,10 +25,10 @@ namespace fscompsoc::async {
       if(on_cancel) {
         (*on_cancel)();
         running = false;
-      } else
+      }
+      else
         throw exceptions::InvalidOperation();
     }
-
     inline bool try_cancel() {
       if(on_cancel) {
         (*on_cancel)();
@@ -39,7 +38,7 @@ namespace fscompsoc::async {
         return false;
     }
 
-    inline bool result() {
+    inline std::optional<T> get() {
       if (!running)
         throw exceptions::InvalidOperation();
 
@@ -47,7 +46,9 @@ namespace fscompsoc::async {
     }
 
     template <typename Rep, typename Period>
-    inline bool result(const std::chrono::duration<Rep,Period>& rel_time) {
+    inline std::optional<T> get(
+      const std::chrono::duration<Rep,Period>& rel_time
+    ) {
       if (!running)
         throw exceptions::InvalidOperation();
 
@@ -58,7 +59,9 @@ namespace fscompsoc::async {
     }
 
     template <typename Rep, typename Period>
-    inline bool result(const std::chrono::time_point<Rep,Period>& abs_time) {
+    inline std::optional<T> get(
+      const std::chrono::time_point<Rep,Period>& abs_time
+    ) {
       if (!running)
         throw exceptions::InvalidOperation();
 
@@ -69,7 +72,12 @@ namespace fscompsoc::async {
     }
 
   public:
-    attempt(std::function<bool()> func);
-    attempt(std::function<bool()> func, std::function<void()> cancel);
+    action(std::function<T()> func);
+    action(std::function<std::optional<T>()> func);
+
+    action(std::function<T()> func, std::function<void()> cancel);
+    action(std::function<std::optional<T>()> func, std::function<void()> cancel);
   };
 }
+
+#include "fscompsoc/async/action.tpp"
