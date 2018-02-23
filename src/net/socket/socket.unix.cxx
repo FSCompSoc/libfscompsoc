@@ -30,6 +30,7 @@ namespace fscompsoc::net {
     condition_variable condvar;
     // Damn spurious wakeups...
     mutex condvar_mutex;
+    mutex socket_mutex;
 
   public:
     thread create_thread() {
@@ -43,7 +44,7 @@ namespace fscompsoc::net {
 
         while(loop) {
           int result = poll(&p, 1, 0);
-
+          socket_mutex.lock();
           switch (result) {
             case 1: {
               // Success, read data
@@ -72,6 +73,7 @@ namespace fscompsoc::net {
             }
             break;
           }
+          socket_mutex.unlock();
         }
       });
     }
@@ -99,6 +101,16 @@ namespace fscompsoc::net {
 
     void cancel(shared_ptr<bool> cancel) {
       *cancel = true;
+    }
+
+    bool send(std::vector<uint8_t> data, shared_ptr<bool> cancel) {
+      socket_mutex.lock();
+      bool success = false;
+      if(!*cancel)
+        success = (::write(fd, data.data(), data.size()) != -1);
+      socket_mutex.unlock();
+
+      return success;
     }
   };
 
@@ -158,6 +170,15 @@ namespace fscompsoc::net {
 
     return action<vector<uint8_t>>(
       [this, c]() { return __internal->get_buffer(c); },
+      [this, c]() { __internal->cancel(c); }
+    );
+  }
+
+  attempt tcp_socket::send(std::vector<uint8_t> data) {
+    shared_ptr<bool> c(new bool);
+
+    return attempt(
+      [this, data = move(data), c]() { return __internal->send(data, c); },
       [this, c]() { __internal->cancel(c); }
     );
   }
