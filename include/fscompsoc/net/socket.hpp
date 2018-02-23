@@ -60,6 +60,9 @@ namespace fscompsoc::net {
   public:
     async::action<std::unique_ptr<tcp_socket>> accept() override;
     async::attempt bind() override;
+
+  public:
+    tcp_server();
   };
 
   class udp_socket : public bindable, public socket {

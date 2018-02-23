@@ -33,7 +33,7 @@ namespace fscompsoc::net {
     mutex socket_mutex;
 
   public:
-    thread create_thread() {
+    thread create_receive_thread() {
       return thread([this]() {
         pollfd p;
         p.fd = fd;
@@ -76,6 +76,20 @@ namespace fscompsoc::net {
           socket_mutex.unlock();
         }
       });
+    }
+
+    thread create_accept_thread() {
+      return thread([this]() {
+        pollfd p;
+        p.fd = fd;
+        p.events = POLLIN;
+        p.revents = 0;
+
+        bool loop = false;
+
+        while(loop) {
+        }
+      }
     }
 
     optional<vector<uint8_t>> get_buffer(shared_ptr<bool> cancel) {
@@ -166,7 +180,7 @@ namespace fscompsoc::net {
       throw Unsupported("IP version not supported");
     }
 
-    __internal->poller = __internal->create_thread();
+    __internal->poller = __internal->create_receive_thread();
   }
 
   tcp_socket::~tcp_socket() {
@@ -190,5 +204,9 @@ namespace fscompsoc::net {
       [this, data = move(data), c]() { return __internal->send(data, c); },
       [this, c]() { __internal->cancel(c); }
     );
+  }
+
+  tcp_server::tcp_server() {
+
   }
 }
