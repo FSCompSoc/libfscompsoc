@@ -6,8 +6,18 @@ PointerAlignment: Left
 AlwaysBreakTemplateDeclarations: true
 AlignAfterOpenBracket: true
 AlignConsecutiveAssignments: true
-BreakBeforeBraces: Linux
 NamespaceIndentation: All
 BreakConstructorInitializers: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 BinPackParameters: false
+AllowShortFunctionsOnASingleLine: Inline
+BreakBeforeBraces: Custom
+BraceWrapping:
+  SplitEmptyFunction: false
+  SplitEmptyNamespace: false
+  SplitEmptyRecord: true
+  AfterClass: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: false
