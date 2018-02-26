@@ -96,7 +96,12 @@ INCLUDE(CPack)
 file(GLOB_RECURSE tests tests/*.cpp)
 
 foreach(test ${tests})
-  get_filename_component(test_name ${test} NAME_WE)
+  file(RELATIVE_PATH test_rel ${CMAKE_SOURCE_DIR}/tests ${test})
+  get_filename_component(test_fname ${test_rel} NAME_WE)
+  get_filename_component(test_dir ${test_rel} DIRECTORY)
+  string(REGEX REPLACE "/" "_" test_dir ${test_dir})
+
+  set(test_name ${test_dir}_${test_fname})
 
   add_executable(${test_name} ${test})
 

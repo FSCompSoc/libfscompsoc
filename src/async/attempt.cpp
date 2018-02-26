@@ -2,8 +2,10 @@
 
 using namespace std;
 
-namespace fscompsoc::async {
-  attempt::attempt(std::function<bool()> func) {
+namespace fscompsoc::async
+{
+  attempt::attempt(std::function<bool()> func)
+  {
     promise<bool> result;
     ret = result.get_future();
 
@@ -14,7 +16,7 @@ namespace fscompsoc::async {
   }
 
   attempt::attempt(std::function<bool()> func, std::function<void()> cancel) :
-    on_cancel(cancel)
+      on_cancel(cancel)
   {
     on_cancel = cancel;
     promise<bool> result;
@@ -26,8 +28,9 @@ namespace fscompsoc::async {
     });
   }
 
-  attempt::~attempt() {
+  attempt::~attempt()
+  {
     try_cancel();
     _t.detach();
   }
-}
+} // namespace fscompsoc::async

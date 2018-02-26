@@ -1,0 +1,13 @@
+IndentWidth: 2
+---
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Left
+AlwaysBreakTemplateDeclarations: true
+AlignAfterOpenBracket: true
+AlignConsecutiveAssignments: true
+BreakBeforeBraces: Linux
+NamespaceIndentation: All
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+BinPackParameters: false

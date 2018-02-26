@@ -2,15 +2,17 @@
 
 #include "fscompsoc/exceptions.hpp"
 
+#include <chrono>
+#include <functional>
 #include <future>
 #include <optional>
 #include <thread>
-#include <functional>
-#include <chrono>
 
-namespace fscompsoc::async {
-  template<typename T>
-  class action {
+namespace fscompsoc::async
+{
+  template <typename T>
+  class action
+  {
   private:
     std::thread _t;
     std::optional<std::function<void()>> on_cancel;
@@ -21,16 +23,17 @@ namespace fscompsoc::async {
     inline bool is_running() { return running; }
 
     inline bool is_cancellable() { return on_cancel.has_value(); }
-    inline void cancel() {
-      if(on_cancel) {
+    inline void cancel()
+    {
+      if (on_cancel) {
         (*on_cancel)();
         running = false;
-      }
-      else
+      } else
         throw exceptions::InvalidOperation();
     }
-    inline bool try_cancel() {
-      if(on_cancel) {
+    inline bool try_cancel()
+    {
+      if (on_cancel) {
         (*on_cancel)();
         running = false;
         return true;
@@ -38,7 +41,8 @@ namespace fscompsoc::async {
         return false;
     }
 
-    inline std::optional<T> get() {
+    inline std::optional<T> get()
+    {
       if (!running)
         throw exceptions::InvalidOperation();
 
@@ -46,9 +50,9 @@ namespace fscompsoc::async {
     }
 
     template <typename Rep, typename Period>
-    inline std::optional<T> get(
-      const std::chrono::duration<Rep,Period>& rel_time
-    ) {
+    inline std::optional<T>
+    get(const std::chrono::duration<Rep, Period>& rel_time)
+    {
       if (!running)
         throw exceptions::InvalidOperation();
 
@@ -59,9 +63,9 @@ namespace fscompsoc::async {
     }
 
     template <typename Rep, typename Period>
-    inline std::optional<T> get(
-      const std::chrono::time_point<Rep,Period>& abs_time
-    ) {
+    inline std::optional<T>
+    get(const std::chrono::time_point<Rep, Period>& abs_time)
+    {
       if (!running)
         throw exceptions::InvalidOperation();
 
@@ -76,8 +80,9 @@ namespace fscompsoc::async {
     action(std::function<std::optional<T>()> func);
 
     action(std::function<T()> func, std::function<void()> cancel);
-    action(std::function<std::optional<T>()> func, std::function<void()> cancel);
+    action(std::function<std::optional<T>()> func,
+           std::function<void()> cancel);
   };
-}
+} // namespace fscompsoc::async
 
 #include "fscompsoc/async/action.tpp"
